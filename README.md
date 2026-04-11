@@ -1,70 +1,79 @@
-# Getting Started with Create React App
+# Benchmark 2.0
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+A Zoomph-style sponsorship analytics dashboard built with React. Visualizes social media brand exposure data across NFL teams, sponsors, assets, and platforms.
 
-## Available Scripts
+**Live App:** [nickcroninzoomph.github.io/Benchmark2](https://nickcroninzoomph.github.io/Benchmark2)
 
-In the project directory, you can run:
+---
 
-### `npm start`
+## Features
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+- **4 Group By modes** — Exposures, Rights Holders (Teams), Assets, Brands
+- **Sortable data table** with total row pinned at bottom
+- **Scout Insights** — AI-style insight cards with key performance callouts
+- **Filter sidebar** — filter by Social Network, Content Type, League, Team, Brand, Asset with AND/OR logic
+- **Posts view** — card-based view of individual posts
+- **CSV Export** — download filtered data
+- **Social + Broadcast** data type toggle
+- Dark theme matching Zoomph's Benchmark UI
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+---
 
-### `npm test`
+## Data Source
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+The app loads from a published Google Sheets CSV (`public/data.csv`). To update the data:
 
-### `npm run build`
+1. Export your Zoomph CSV
+2. Replace `public/data.csv` with the new file
+3. Run `npm run deploy` to redeploy
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+### Required CSV Columns
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+| Column | Description |
+|---|---|
+| `Partner` | Brand / sponsor name |
+| `PartnerExposureCreatorName` | Team / rights holder name |
+| `PartnerAssetLabel` | Asset type (Jersey, Signage, etc.) |
+| `ServiceType` | Platform (Instagram, TikTok, etc.) |
+| `ContentType` | Post type (Photo, Video, Carousel) |
+| `Impressions` | Post impressions |
+| `Engagement` | Total engagements |
+| `EngagementRate` | Engagement rate (e.g. `7.54%`) |
+| `BrandExposureValue` | Brand / logo detection value |
+| `PostValue` | Social / earned media value |
+| `ViewCount` | Video views |
+| `FollowerCount` | Account follower count |
+| `Url` | Post URL |
+| `Message` | Post caption |
+| `PartnerExposureDate` | Post date |
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+---
 
-### `npm run eject`
+## Local Development
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+```bash
+# Install dependencies
+npm install
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+# Start dev server
+npm start
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+# Build for production
+npm run build
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+# Deploy to GitHub Pages
+npm run deploy
+```
 
-## Learn More
+---
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+## Tech Stack
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+- React 19 (Create React App)
+- PapaParse — CSV parsing
+- GitHub Pages — hosting
+- Pure CSS dark theme (no UI library)
 
-### Code Splitting
+---
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+Built by Zoomph · [github.com/NickCroninZoomph/Benchmark2](https://github.com/NickCroninZoomph/Benchmark2)
