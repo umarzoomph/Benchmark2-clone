@@ -21,6 +21,8 @@ A Zoomph-style sponsorship analytics dashboard built with React. Visualizes soci
 
 ## Data Source
 
+**Source Sheet:** [NFL Team Owned Social Data (Google Sheets)](https://docs.google.com/spreadsheets/d/1skg95Bmr137xbDWTJuhOL7qLMMQXOx3cDWs0s2ceOBw/edit?usp=sharing)
+
 The app loads from a published Google Sheets CSV (`public/data.csv`). To update the data:
 
 1. Export your Zoomph CSV
