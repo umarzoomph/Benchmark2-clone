@@ -290,6 +290,110 @@ These need answers before work begins:
 
 ---
 
+## Cost Analysis & Optimization
+
+### What Drives Snowflake Cost
+Snowflake charges on two axes:
+1. **Compute** — virtual warehouse credits ($2–3/credit). A warehouse burns credits while running, minimum 60 seconds per query session.
+2. **Storage** — $23/TB/month on-demand (negligible at our data size).
+
+The biggest risk is **idle compute** — a warehouse that spins up for every dashboard load and doesn't auto-suspend fast enough.
+
+---
+
+### Cost Estimate (Baseline, Unoptimized)
+| Item | Assumption | Monthly Cost |
+|---|---|---|
+| Snowflake XS warehouse | 2 hrs/day active | ~$120/mo |
+| Snowpipe processing | 30 files/day × 30 days | ~$1.50/mo |
+| S3 storage (processed files) | ~500MB/month | ~$0.01/mo |
+| Lambda API (1M req free tier) | <1M requests | $0 |
+| **Total** | | **~$122/mo** |
+
+---
+
+### Optimized Architecture — Target: ~$15–30/month
+
+The key insight: **52K rows is small data.** We don't need warehouse compute running constantly. Pre-aggregate everything nightly so the dashboard queries tiny summary tables, not raw rows.
+
+#### Optimization 1 — Pre-Aggregate Nightly (Most Impactful)
+Instead of querying 52K raw rows on every dashboard load, run a nightly Snowflake Task that pre-builds the 4 group-by views:
+
+```sql
+-- Runs nightly at 2am, costs ~10 seconds of XS compute
+CREATE OR REPLACE TASK nightly_aggregation
+  WAREHOUSE = benchmark_xs
+  SCHEDULE  = 'USING CRON 0 2 * * * UTC'
+AS
+  CREATE OR REPLACE TABLE social.agg_brands AS
+    SELECT Partner, COUNT(*) organicPosts, SUM(Impressions) impressions,
+           SUM(BrandExposureValue) brandValue, ...
+    FROM social.exposures_v GROUP BY Partner;
+  -- repeat for assets, teams, exposures
+```
+
+Dashboard queries hit a 32-row summary table, not 52K rows → queries finish in <1 second → warehouse auto-suspends in 60s → **~$0.05/night in compute**.
+
+#### Optimization 2 — Aggressive Auto-Suspend
+```sql
+CREATE WAREHOUSE benchmark_xs
+  WAREHOUSE_SIZE = 'X-SMALL'
+  AUTO_SUSPEND   = 60        -- suspend after 60 seconds idle
+  AUTO_RESUME    = TRUE
+  INITIALLY_SUSPENDED = TRUE;
+```
+XS warehouse costs $2/credit. With 60s auto-suspend, a single dashboard query costs ~$0.03.
+
+#### Optimization 3 — API Response Cache (CloudFront / Vercel Edge)
+Cache API responses for 15–30 minutes. Since data only refreshes nightly, 99% of dashboard loads never touch Snowflake at all.
+
+```
+Dashboard request
+    → CloudFront CDN (cache hit, 15min TTL) → return instantly, $0
+    → CloudFront (cache miss) → Lambda → Snowflake → cache result
+```
+Estimated Snowflake hits: ~50/day (cache misses only) vs ~5,000/day without cache.
+
+#### Optimization 4 — Batch COPY INTO vs Snowpipe
+Snowpipe charges $0.06 per 1,000 files. If data refreshes nightly (one file/night), Snowpipe costs ~$0.002/month. But if Zoomph writes hundreds of small files, costs add up. Instead, use a **scheduled COPY INTO** that runs once nightly:
+
+```sql
+CREATE OR REPLACE TASK nightly_ingest
+  WAREHOUSE = benchmark_xs
+  SCHEDULE  = 'USING CRON 0 1 * * * UTC'  -- 1am, before aggregation
+AS
+  COPY INTO social.exposures_raw
+  FROM @s3_stage
+  PATTERN = '.*\.csv'
+  ON_ERROR = 'CONTINUE';
+```
+Skips Snowpipe entirely. Saves per-file fees and simplifies setup.
+
+#### Optimization 5 — External Tables (Advanced)
+If storage cost becomes a concern at scale, use a Snowflake **External Table** pointed directly at S3. Snowflake reads S3 on query — zero Snowflake storage cost. Trade-off: slightly slower queries (always reading from S3). Not needed at current data size but worth knowing.
+
+---
+
+### Revised Cost Estimate (Optimized)
+| Item | Assumption | Monthly Cost |
+|---|---|---|
+| Snowflake XS warehouse | Nightly task (~2 min) + cache miss queries (~50/day × 2s) | ~$8–15/mo |
+| Snowflake storage | ~500MB raw + ~1MB aggregated | ~$0.01/mo |
+| S3 storage + transfer | ~500MB/month | ~$0.02/mo |
+| Lambda API | <1M requests (free tier) | $0 |
+| CloudFront CDN | <1TB (free tier) | $0 |
+| **Total** | | **~$8–15/mo** |
+
+---
+
+### When to Reconsider This Architecture
+- **>10M rows/month ingested** → upgrade to Small warehouse, evaluate clustering keys
+- **Real-time refresh needed** → re-enable Snowpipe, accept ~$30–50/month
+- **>50 concurrent dashboard users** → add connection pooling, evaluate multi-cluster warehouse
+- **Multi-client/multi-league** → partition by `league` + `season`, use row-level security
+
+---
+
 ## Effort Estimate
 
 | Phase | Task | Estimate |
