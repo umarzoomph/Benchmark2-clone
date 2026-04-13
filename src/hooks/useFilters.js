@@ -40,13 +40,14 @@ export function useFilters(rawRows, dataType) {
   // Derived unique values for sidebar dropdowns
   const uniques = useMemo(() => {
     if (!rawRows) return { networks:[], contentTypes:[], leagues:[], teams:[], brands:[], assets:[] };
+    const toStr = v => (v != null && v !== '') ? String(v) : null;
     return {
-      networks:     [...new Set(rawRows.map(r => r.ServiceType).filter(Boolean))].sort(),
-      contentTypes: [...new Set(rawRows.map(r => r.ContentType).filter(Boolean))].sort(),
-      leagues:      [...new Set(rawRows.map(r => r.League).filter(Boolean))].sort(),
-      teams:        [...new Set(rawRows.map(r => r.PartnerExposureCreatorName).filter(Boolean))].sort(),
-      brands:       [...new Set(rawRows.map(r => r.Partner).filter(Boolean))].sort(),
-      assets:       [...new Set(rawRows.map(r => r.PartnerAssetLabel).filter(Boolean))].sort(),
+      networks:     [...new Set(rawRows.map(r => toStr(r.ServiceType)).filter(Boolean))].sort(),
+      contentTypes: [...new Set(rawRows.map(r => toStr(r.ContentType)).filter(Boolean))].sort(),
+      leagues:      [...new Set(rawRows.map(r => toStr(r.League)).filter(Boolean))].sort(),
+      teams:        [...new Set(rawRows.map(r => toStr(r.PartnerExposureCreatorName)).filter(Boolean))].sort(),
+      brands:       [...new Set(rawRows.map(r => toStr(r.Partner)).filter(Boolean))].sort(),
+      assets:       [...new Set(rawRows.map(r => toStr(r.PartnerAssetLabel)).filter(Boolean))].sort(),
     };
   }, [rawRows]);
 

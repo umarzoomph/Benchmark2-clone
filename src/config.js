@@ -1,5 +1,4 @@
-const SHEET_ID = '1skg95Bmr137xbDWTJuhOL7qLMMQXOx3cDWs0s2ceOBw';
-const SOCIAL_CSV_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/export?format=csv`;
+const SOCIAL_CSV_URL = `https://docs.google.com/spreadsheets/d/e/2PACX-1vQMm7zxpz6r6El12jiSZ63q5TgQMFp0tHGOUDBxFtRj-brc5cAa26V8V6JxUAw7LEqMx9hEvIqxLv1R/pub?output=csv`;
 
 export const DATA_SOURCES = [
   {

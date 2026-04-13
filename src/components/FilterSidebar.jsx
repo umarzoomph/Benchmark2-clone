@@ -22,7 +22,7 @@ function TagInput({ selected, options, onAdd, onRemove, placeholder }) {
   const ref = useRef(null);
 
   const filtered = (options || []).filter(
-    o => !selected.includes(o) && o.toLowerCase().includes(query.toLowerCase())
+    o => !selected.includes(o) && String(o).toLowerCase().includes(query.toLowerCase())
   );
 
   useEffect(() => {
