@@ -2,8 +2,8 @@
 
 **Status:** Draft — Awaiting Engineering Review
 **Author:** Nick Cronin
-**Repo:** [NickCroninZoomph/Benchmark2](https://github.com/NickCroninZoomph/Benchmark2)
-**Live App:** [nickcroninzoomph.github.io/Benchmark2](https://nickcroninzoomph.github.io/Benchmark2)
+**Repo:** [umarzoomph/Benchmark2-clone](https://github.com/umarzoomph/Benchmark2-clone)
+**Live App:** [umarzoomph.github.io/Benchmark2](https://umarzoomph.github.io/Benchmark2-clone/)
 
 ---
 

@@ -2,7 +2,7 @@
 
 A Zoomph-style sponsorship analytics dashboard built with React. Visualizes social media brand exposure data across NFL teams, sponsors, assets, and platforms.
 
-**Live App:** [nickcroninzoomph.github.io/Benchmark2](https://nickcroninzoomph.github.io/Benchmark2)
+**Live App:** [umarzoomph.github.io/Benchmark2-clone](https://umarzoomph.github.io/Benchmark2-clone)
 
 ---
 
@@ -78,4 +78,4 @@ npm run deploy
 
 ---
 
-Built by Zoomph · [github.com/NickCroninZoomph/Benchmark2](https://github.com/NickCroninZoomph/Benchmark2)
+Built by Zoomph · https://umarzoomph.github.io/Benchmark2-clone/
